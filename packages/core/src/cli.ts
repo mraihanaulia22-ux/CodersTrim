@@ -1,8 +1,11 @@
 import { Command } from 'commander';
 import { logger } from './services/logger.js';
 import { restoreLatestSnapshot } from './services/snapshot.js';
+import { executeSafeInjectionPipeline } from './services/safe-injection-pipeline.js';
 import { loadConfig } from './plugins/config-loader.js';
 import { defaultRegistry } from './plugins/registry.js';
+import { createPluginContext } from './plugins/context-factory.js';
+import { HookDispatcher } from './plugins/dispatcher.js';
 
 export function createProgram(): Command {
   const program = new Command();
@@ -29,11 +32,51 @@ export function createProgram(): Command {
 
   // Command: add
   program
-    .command('add <feature>')
+    .command('add [feature]')
     .description('Safely inject a feature module into the active project')
     .option('-f, --force', 'Bypass dirty git working tree guard')
+    .option('-l, --list', 'List all available injectables registered across plugins')
     .action(async (feature, options) => {
-      logger.info(`Injecting feature: ${feature} (force=${Boolean(options.force)})`);
+      const cwd = process.cwd();
+      const config = await loadConfig(cwd);
+
+      // List all injectables
+      if (options.list || !feature) {
+        logger.heading('Available Feature Injectables:');
+        const plugins = defaultRegistry.getAll();
+        let totalFound = 0;
+
+        for (const p of plugins) {
+          if (p.contributes?.injectables && p.contributes.injectables.length > 0) {
+            for (const inj of p.contributes.injectables) {
+              logger.info(`  • ${inj.id.padEnd(20)} [${p.name}] ${inj.description}`);
+              totalFound++;
+            }
+          }
+        }
+
+        if (totalFound === 0) {
+          logger.info('No injectables currently registered. Install framework plugins to enable feature injection.');
+        }
+        return;
+      }
+
+      const ctx = createPluginContext(cwd, config);
+      const dispatcher = new HookDispatcher(defaultRegistry);
+
+      const result = await executeSafeInjectionPipeline({
+        cwd,
+        feature,
+        force: Boolean(options.force),
+        dispatcher,
+        ctx,
+      });
+
+      if (result.success) {
+        logger.success(result.message);
+      } else {
+        logger.error(result.message);
+      }
     });
 
   // Command: doctor

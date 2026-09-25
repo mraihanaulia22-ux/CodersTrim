@@ -42,6 +42,8 @@ export function createPluginContext(cwd: string, config: CodersTrimConfig): Plug
           const source = await fs.readFile(fullPath, 'utf-8');
           const result = injectAtAnchor(source, anchor, content);
           if (result.injected) {
+            // Snapshot before updating
+            await createSnapshot(cwd, [relPath], `inject_${anchor}`);
             await fs.writeFile(fullPath, result.content, 'utf-8');
             return true;
           }

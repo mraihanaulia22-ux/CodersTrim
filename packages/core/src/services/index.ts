@@ -3,3 +3,4 @@ export * from './typo-engine.js';
 export * from './vcs-guard.js';
 export * from './snapshot.js';
 export * from './anchor-inject.js';
+export * from './safe-injection-pipeline.js';
