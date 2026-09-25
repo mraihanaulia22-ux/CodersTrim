@@ -1,3 +1,5 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { Command } from 'commander';
 import { logger } from './services/logger.js';
 import { restoreLatestSnapshot } from './services/snapshot.js';
@@ -78,6 +80,81 @@ export function createProgram(): Command {
       } else {
         logger.error(result.message);
       }
+    });
+
+  // Command: ui
+  const uiCmd = program.command('ui').description('Generate clean, uncompiled Tailwind UI components');
+
+  uiCmd
+    .command('list')
+    .description('List all available UI component templates')
+    .action(async () => {
+      logger.heading('Available UI Components:');
+      const plugins = defaultRegistry.getAll();
+      let totalFound = 0;
+
+      for (const p of plugins) {
+        if (p.contributes?.uiComponents) {
+          for (const comp of p.contributes.uiComponents) {
+            logger.info(`  • ${comp.id.padEnd(15)} [${p.name}] ${comp.description}`);
+            totalFound++;
+          }
+        }
+      }
+
+      if (totalFound === 0) {
+        // Built-in fallback descriptions if plugin not yet registered in registry
+        logger.info('  • card            [Official] Modern Card with title, badge, and content');
+        logger.info('  • button          [Official] Accessible Button with variants');
+      }
+    });
+
+  uiCmd
+    .command('add <component>')
+    .description('Scaffold an uncompiled Tailwind component into your project')
+    .option('-f, --framework <framework>', 'Target framework (react, blade, vue, html)', 'react')
+    .option('-o, --output <dir>', 'Target output directory', 'components')
+    .action(async (component, options) => {
+      const cwd = process.cwd();
+      const compId = component.toLowerCase().trim();
+
+      // Find component in registered plugins
+      let templateCode: string | undefined;
+      let compName = compId;
+
+      for (const p of defaultRegistry.getAll()) {
+        const found = p.contributes?.uiComponents?.find((c) => c.id === compId);
+        if (found) {
+          templateCode = found.template;
+          compName = found.name;
+          break;
+        }
+      }
+
+      // Built-in fallback template for card & button if plugin not dynamically loaded yet
+      if (!templateCode) {
+        if (compId === 'card') {
+          templateCode = `import React from 'react';\n\nexport function Card({ title, description, children }: { title: string; description: string; children?: React.ReactNode }) {\n  return (\n    <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl backdrop-blur-xl transition-all duration-300 hover:border-slate-700">\n      <h3 className="text-xl font-bold tracking-tight text-white">{title}</h3>\n      <p className="mt-2 text-sm leading-relaxed text-slate-400">{description}</p>\n      {children && <div className="mt-4">{children}</div>}\n    </div>\n  );\n}\n`;
+        } else if (compId === 'button') {
+          templateCode = `import React from 'react';\n\nexport function Button({ children, className = '', ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {\n  return (\n    <button className={\`inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all duration-200 hover:bg-indigo-500 \${className}\`} {...props}>\n      {children}\n    </button>\n  );\n}\n`;
+        }
+      }
+
+      if (!templateCode) {
+        logger.error(`Component '${component}' not found. Run 'coderstrim ui list' to see available components.`);
+        return;
+      }
+
+      const ext = options.framework === 'blade' ? 'blade.php' : options.framework === 'vue' ? 'vue' : options.framework === 'html' ? 'html' : 'tsx';
+      const fileName = `${compId.charAt(0).toUpperCase() + compId.slice(1)}.${ext}`;
+      const targetDir = path.resolve(cwd, options.output);
+      const targetFilePath = path.join(targetDir, fileName);
+
+      await fs.mkdir(targetDir, { recursive: true });
+      await fs.writeFile(targetFilePath, templateCode, 'utf-8');
+
+      logger.success(`Created ${compName} component at: ${path.relative(cwd, targetFilePath)}`);
+      logger.info('Clean, uncompiled code generated. You own 100% of the code (no dependency lock-in).');
     });
 
   // Command: doctor
