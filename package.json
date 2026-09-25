@@ -11,7 +11,9 @@
     "build": "npm run --workspaces --if-present build",
     "test": "npm run --workspaces --if-present test",
     "lint": "npm run --workspaces --if-present lint",
-    "clean": "npm run --workspaces --if-present clean"
+    "clean": "npm run --workspaces --if-present clean",
+    "pack:all": "npm run build && npm pack --workspaces",
+    "release:beta": "npm run build && npm publish --workspaces --tag beta --access public"
   },
   "devDependencies": {
     "typescript": "^5.7.3",

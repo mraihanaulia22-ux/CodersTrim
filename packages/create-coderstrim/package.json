@@ -1,0 +1,46 @@
+{
+  "name": "create-coderstrim",
+  "version": "2.0.0",
+  "description": "Zero-install bootstrap tool for creating CodersTrim projects",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "create-coderstrim": "./bin/index.js"
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@coderstrim/core": "^2.0.0",
+    "commander": "^13.1.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "tsup": "^8.3.6",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "create-coderstrim",
+    "coderstrim",
+    "react",
+    "nextjs",
+    "laravel",
+    "fastapi",
+    "scaffolder"
+  ],
+  "author": "CodersTrim Contributors",
+  "license": "MIT"
+}
