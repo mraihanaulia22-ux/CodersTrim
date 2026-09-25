@@ -1,0 +1,35 @@
+{
+  "name": "coderstrim-monorepo",
+  "version": "2.0.0",
+  "private": true,
+  "description": "CodersTrim CLI v2 - Universal Core Engine with Open Plugin Architecture",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run --workspaces --if-present build",
+    "test": "npm run --workspaces --if-present test",
+    "lint": "npm run --workspaces --if-present lint",
+    "clean": "npm run --workspaces --if-present clean"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "tsup": "^8.3.6",
+    "vitest": "^3.0.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "coderstrim",
+    "cli",
+    "scaffolding",
+    "tailwind",
+    "plugin-architecture",
+    "linter",
+    "doctor"
+  ],
+  "author": "CodersTrim Contributors",
+  "license": "MIT"
+}
