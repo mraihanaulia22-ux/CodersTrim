@@ -6,6 +6,7 @@ import { restoreLatestSnapshot } from './services/snapshot.js';
 import { executeSafeInjectionPipeline } from './services/safe-injection-pipeline.js';
 import { executeDoctorPipeline } from './services/doctor-pipeline.js';
 import { checkPortAvailability, diagnoseCommonPorts } from './services/port-guard.js';
+import { generateProject } from './services/project-generator.js';
 import { loadConfig } from './plugins/config-loader.js';
 import { defaultRegistry } from './plugins/registry.js';
 import { createPluginContext } from './plugins/context-factory.js';
@@ -23,15 +24,29 @@ export function createProgram(): Command {
   program
     .command('init [projectName]')
     .description('Initialize a new project scaffolded with your chosen framework')
-    .option('-t, --template <template>', 'Specific starter template/plugin to use')
-    .action(async (projectName, options) => {
+    .option('-t, --template <template>', 'Starter template (react, nextjs, laravel, fastapi)', 'react')
+    .action(async (projectName = 'my-coderstrim-app', options) => {
       logger.banner();
-      const config = await loadConfig(process.cwd());
-      logger.info(`Initializing project: ${projectName || 'new-app'}`);
-      logger.info(`Active configured plugins: ${config.plugins.length}`);
-      if (options.template) {
-        logger.info(`Selected template: ${options.template}`);
+      logger.info(`Initializing project '${projectName}' with template '${options.template}'...`);
+
+      const result = await generateProject({
+        projectName,
+        templateId: options.template as any,
+        cwd: process.cwd(),
+      });
+
+      if (!result.success) {
+        logger.error(result.message);
+        return;
       }
+
+      logger.success(`Created project files (${result.filesCreated.length} files generated)`);
+      logger.vcs('Initialized clean Git repository with main branch.');
+      logger.heading('\n👉 Next Steps:');
+      for (const step of result.nextSteps) {
+        console.log(`   ${step}`);
+      }
+      console.log('');
     });
 
   // Command: add
@@ -103,7 +118,6 @@ export function createProgram(): Command {
       }
 
       if (totalFound === 0) {
-        // Built-in fallback descriptions if plugin not yet registered in registry
         logger.info('  • card            [Official] Modern Card with title, badge, and content');
         logger.info('  • button          [Official] Accessible Button with variants');
       }
@@ -118,7 +132,6 @@ export function createProgram(): Command {
       const cwd = process.cwd();
       const compId = component.toLowerCase().trim();
 
-      // Find component in registered plugins
       let templateCode: string | undefined;
       let compName = compId;
 
@@ -131,7 +144,6 @@ export function createProgram(): Command {
         }
       }
 
-      // Built-in fallback template for card & button if plugin not dynamically loaded yet
       if (!templateCode) {
         if (compId === 'card') {
           templateCode = `import React from 'react';\n\nexport function Card({ title, description, children }: { title: string; description: string; children?: React.ReactNode }) {\n  return (\n    <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl backdrop-blur-xl transition-all duration-300 hover:border-slate-700">\n      <h3 className="text-xl font-bold tracking-tight text-white">{title}</h3>\n      <p className="mt-2 text-sm leading-relaxed text-slate-400">{description}</p>\n      {children && <div className="mt-4">{children}</div>}\n    </div>\n  );\n}\n`;

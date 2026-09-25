@@ -25,7 +25,7 @@ export function injectAtAnchor(
   // Regex patterns supporting JS/TS, Python, and HTML/JSX anchor styles
   const escapedKey = anchorKey.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
   const anchorRegex = new RegExp(
-    `^([ \\t]*)(?://|#|<!--|{\\/\\*)[ \\t]*@CodersTrim-Inject-${escapedKey}(?:[ \\t]*(?:-->|\\*\\/))?[ \\t]*$`,
+    `^([ \\t]*)(?://|#|<!--|{\\/\\*)[ \\t]*@CodersTrim-Inject-${escapedKey}(?:[ \\t]*(?:-->|\\*\\/\\}|\\*\\/))?[ \\t]*$`,
     'm'
   );
 

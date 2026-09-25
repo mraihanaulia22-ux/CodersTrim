@@ -8,3 +8,5 @@ export * from './diff-engine.js';
 export * from './patcher.js';
 export * from './port-guard.js';
 export * from './doctor-pipeline.js';
+export * from './starter-templates.js';
+export * from './project-generator.js';
