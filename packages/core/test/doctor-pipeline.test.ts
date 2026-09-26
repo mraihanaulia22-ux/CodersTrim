@@ -11,7 +11,7 @@ import { PluginRegistry } from '../src/plugins/registry.js';
 import { HookDispatcher } from '../src/plugins/dispatcher.js';
 import { createPluginContext } from '../src/plugins/context-factory.js';
 import { CodersTrimConfigSchema } from '../src/types/config.js';
-import type { LintIssue } from '../types/lint.js';
+import type { LintIssue } from '../src/types/lint.js';
 import type { CodersTrimPlugin } from '../src/types/plugin.js';
 
 describe('DoctorPipeline, Reverse-Offset Patcher & Diff Engine', () => {

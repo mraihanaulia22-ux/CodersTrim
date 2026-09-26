@@ -8,10 +8,10 @@ describe('create-coderstrim bootstrap program', () => {
     expect(program.version()).toBe('2.0.0');
   });
 
-  it('declares the -t, --template option with default react', () => {
+  it('declares the -t, --template option for framework selection', () => {
     const program = createBootstrapProgram();
     const templateOption = program.options.find((opt) => opt.name() === 'template');
     expect(templateOption).toBeDefined();
-    expect(templateOption?.defaultValue).toBe('react');
+    expect(templateOption?.short).toBe('-t');
   });
 });

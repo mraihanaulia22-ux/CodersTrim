@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@coderstrim/core": "^2.0.0",
+    "@inquirer/prompts": "^8.7.2",
     "commander": "^13.1.0",
     "picocolors": "^1.1.1"
   },
