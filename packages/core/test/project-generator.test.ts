@@ -44,6 +44,9 @@ describe('ProjectGenerator Service', () => {
     expect(result.filesCreated).toContain('routes/web.php');
     expect(result.filesCreated).toContain('app/Http/Controllers/HomeController.php');
     expect(result.filesCreated).toContain('app/Models/User.php');
+    expect(result.filesCreated).toContain('.env.example');
+    expect(result.filesCreated).toContain('.gitignore');
+    expect(result.filesCreated).toContain('README.md');
 
     const routesContent = await fs.readFile(path.join(tempDir, 'my-laravel-app', 'routes/web.php'), 'utf-8');
     expect(routesContent).toContain('// @CodersTrim-Inject-Routes');
@@ -60,6 +63,9 @@ describe('ProjectGenerator Service', () => {
     expect(result.filesCreated).toContain('requirements.txt');
     expect(result.filesCreated).toContain('main.py');
     expect(result.filesCreated).toContain('app/routers/items.py');
+    expect(result.filesCreated).toContain('.env.example');
+    expect(result.filesCreated).toContain('.gitignore');
+    expect(result.filesCreated).toContain('README.md');
 
     const mainPy = await fs.readFile(path.join(tempDir, 'my-fastapi-app', 'main.py'), 'utf-8');
     expect(mainPy).toContain('# @CodersTrim-Inject-Routers');
@@ -77,6 +83,9 @@ describe('ProjectGenerator Service', () => {
     expect(result.filesCreated).toContain('main.go');
     expect(result.filesCreated).toContain('handlers/user.go');
     expect(result.filesCreated).toContain('models/user.go');
+    expect(result.filesCreated).toContain('.env.example');
+    expect(result.filesCreated).toContain('.gitignore');
+    expect(result.filesCreated).toContain('README.md');
 
     const mainGo = await fs.readFile(path.join(tempDir, 'my-gofiber-app', 'main.go'), 'utf-8');
     expect(mainGo).toContain('fiber.New()');
@@ -156,11 +165,14 @@ describe('ProjectGenerator Service', () => {
     expect(result.success).toBe(true);
     expect(result.filesCreated).toContain('package.json');
     expect(result.filesCreated).toContain('capacitor.config.json');
+    expect(result.filesCreated).toContain('tsconfig.json');
+    expect(result.filesCreated).toContain('.gitignore');
+    expect(result.filesCreated).toContain('README.md');
     expect(result.filesCreated).toContain('src/App.tsx');
     expect(result.filesCreated).toContain('src/services/api.ts');
   });
 
-  it('scaffolds a Flutter Dart mobile project with Skia/Web canvas', async () => {
+  it('scaffolds a production-grade Flutter Dart project with Android, iOS, Web, and modular lib', async () => {
     const result = await generateProject({
       projectName: 'my-flutter-app',
       templateId: 'flutter',
@@ -169,8 +181,20 @@ describe('ProjectGenerator Service', () => {
 
     expect(result.success).toBe(true);
     expect(result.filesCreated).toContain('pubspec.yaml');
+    expect(result.filesCreated).toContain('analysis_options.yaml');
+    expect(result.filesCreated).toContain('.gitignore');
+    expect(result.filesCreated).toContain('README.md');
+    expect(result.filesCreated).toContain('android/app/src/main/AndroidManifest.xml');
+    expect(result.filesCreated).toContain('android/app/build.gradle');
+    expect(result.filesCreated).toContain('android/settings.gradle');
+    expect(result.filesCreated).toContain('ios/Runner/Info.plist');
+    expect(result.filesCreated).toContain('ios/Runner/AppDelegate.swift');
     expect(result.filesCreated).toContain('lib/main.dart');
+    expect(result.filesCreated).toContain('lib/screens/home_screen.dart');
+    expect(result.filesCreated).toContain('lib/services/api_service.dart');
+    expect(result.filesCreated).toContain('test/widget_test.dart');
     expect(result.filesCreated).toContain('web/index.html');
+    expect(result.filesCreated).toContain('web/manifest.json');
   });
 
   it('scaffolds a Supabase BaaS project with migrations and client config', async () => {

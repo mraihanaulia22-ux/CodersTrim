@@ -282,6 +282,69 @@ export default {
   plugins: [],
 };
 `,
+        'tsconfig.json': JSON.stringify(
+          {
+            compilerOptions: {
+              target: 'ES2020',
+              useDefineForClassFields: true,
+              lib: ['ES2020', 'DOM', 'DOM.Iterable'],
+              module: 'ESNext',
+              skipLibCheck: true,
+              moduleResolution: 'bundler',
+              resolveJsonModule: true,
+              isolatedModules: true,
+              moduleDetection: 'force',
+              noEmit: true,
+              jsx: 'react-jsx',
+              strict: true,
+              noUnusedLocals: true,
+              noUnusedParameters: true,
+              noFallthroughCasesInSwitch: true,
+            },
+            include: ['src'],
+          },
+          null,
+          2
+        ),
+        '.gitignore': `# Dependencies
+node_modules
+dist
+dist-ssr
+*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Editor
+.DS_Store
+.idea
+`,
+        'README.md': `# ${projectName}
+
+Modern Single Page Application built with React 19, Vite, TypeScript, and Tailwind CSS.
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
+\`\`\`bash
+npm install
+\`\`\`
+
+### 2. Start development server
+\`\`\`bash
+npm run dev
+\`\`\`
+The application will run on [http://localhost:5173](http://localhost:5173).
+
+### 3. Build for production
+\`\`\`bash
+npm run build
+\`\`\`
+`,
         'coderstrim.config.json': JSON.stringify(
           {
             plugins: ['@coderstrim/plugin-tailwind', '@coderstrim/plugin-react'],
@@ -400,6 +463,91 @@ module.exports = {
   },
   plugins: [],
 };
+`,
+        'tsconfig.json': JSON.stringify(
+          {
+            compilerOptions: {
+              target: 'ES2017',
+              lib: ['dom', 'dom.iterable', 'esnext'],
+              allowJs: true,
+              skipLibCheck: true,
+              strict: true,
+              noEmit: true,
+              esModuleInterop: true,
+              module: 'esnext',
+              moduleResolution: 'bundler',
+              resolveJsonModule: true,
+              isolatedModules: true,
+              jsx: 'preserve',
+              incremental: true,
+              plugins: [
+                {
+                  name: 'next',
+                },
+              ],
+              paths: {
+                '@/*': ['./*'],
+              },
+            },
+            include: ['next-env.d.ts', '**/*.ts', '**/*.tsx', '.next/types/**/*.ts'],
+            exclude: ['node_modules'],
+          },
+          null,
+          2
+        ),
+        '.gitignore': `# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Local env files
+.env*.local
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+`,
+        'README.md': `# ${projectName}
+
+Fullstack React application built with Next.js 15+ (App Router) and Tailwind CSS.
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
+\`\`\`bash
+npm install
+\`\`\`
+
+### 2. Start development server
+\`\`\`bash
+npm run dev
+\`\`\`
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 3. Build for production
+\`\`\`bash
+npm run build
+npm start
+\`\`\`
 `,
         'coderstrim.config.json': JSON.stringify(
           {
@@ -600,6 +748,73 @@ Route::get('/health', function () {
 </body>
 </html>
 `,
+        '.env.example': `APP_NAME="${projectName}"
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_TIMEZONE=UTC
+APP_URL=http://localhost:8000
+
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=en_US
+
+DB_CONNECTION=sqlite
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=laravel
+# DB_USERNAME=root
+# DB_PASSWORD=
+
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+`,
+        '.gitignore': `/vendor/
+/node_modules/
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+`,
+        'README.md': `# ${projectName}
+
+Modern PHP fullstack monolith built with Laravel 11, Blade MVC, SQLite, and Tailwind CSS.
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
+\`\`\`bash
+composer install
+\`\`\`
+
+### 2. Configure environment
+\`\`\`bash
+cp .env.example .env
+php artisan key:generate
+\`\`\`
+
+### 3. Run database migrations
+\`\`\`bash
+php artisan migrate
+\`\`\`
+
+### 4. Start local development server
+\`\`\`bash
+php artisan serve
+\`\`\`
+Open [http://localhost:8000](http://localhost:8000) in your browser.
+`,
         'coderstrim.config.json': JSON.stringify(
           {
             plugins: ['@coderstrim/plugin-tailwind', '@coderstrim/plugin-laravel'],
@@ -729,6 +944,67 @@ return [
     'supports_credentials' => true,
 ];
 `,
+        '.env.example': `APP_NAME="${projectName}"
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_TIMEZONE=UTC
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=sqlite
+
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+`,
+        '.gitignore': `/vendor/
+/node_modules/
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+`,
+        'README.md': `# ${projectName} (REST API)
+
+Modular REST API backend built with Laravel 11, JSON Resources, and SQLite.
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
+\`\`\`bash
+composer install
+\`\`\`
+
+### 2. Configure environment
+\`\`\`bash
+cp .env.example .env
+php artisan key:generate
+\`\`\`
+
+### 3. Run database migrations
+\`\`\`bash
+touch database/database.sqlite
+php artisan migrate
+\`\`\`
+
+### 4. Start API server
+\`\`\`bash
+php artisan serve --port=8000
+\`\`\`
+Endpoints:
+- Health check: [http://localhost:8000/api/health](http://localhost:8000/api/health)
+- Users: [http://localhost:8000/api/users](http://localhost:8000/api/users)
+`,
         'coderstrim.config.json': JSON.stringify(
           {
             plugins: ['@coderstrim/plugin-laravel'],
@@ -798,6 +1074,56 @@ def get_items():
         {"id": 1, "title": "First Item", "description": "Scaffolded with CodersTrim"},
         {"id": 2, "title": "Second Item", "description": "Ready to customize"}
     ]
+`,
+        '.env.example': `APP_NAME="${projectName}"
+PORT=8000
+ENVIRONMENT=development
+CORS_ORIGINS=http://localhost:5173,http://localhost:3000,http://localhost:8081
+`,
+        '.gitignore': `# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.env.local
+.venv/
+venv/
+env/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+`,
+        'README.md': `# ${projectName}
+
+High-performance asynchronous Python API built with FastAPI, Pydantic v2, and SQLite readiness.
+
+## 🚀 Getting Started
+
+### 1. Create and activate virtual environment
+\`\`\`bash
+# Linux/macOS
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Windows (PowerShell)
+python -m venv .venv
+.venv\\Scripts\\Activate.ps1
+\`\`\`
+
+### 2. Install dependencies
+\`\`\`bash
+pip install -r requirements.txt
+\`\`\`
+
+### 3. Start development server
+\`\`\`bash
+uvicorn main:app --reload --port 8000
+\`\`\`
+Interactive API Docs available at [http://localhost:8000/docs](http://localhost:8000/docs).
 `,
         'coderstrim.config.json': JSON.stringify(
           {
@@ -882,6 +1208,48 @@ func GetUsers(c *fiber.Ctx) error {
 \t}
 \treturn c.JSON(users)
 }
+`,
+        '.env.example': `PORT=8080
+APP_ENV=development
+`,
+        '.gitignore': `# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+
+# Test binary, built with go test -c
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories
+vendor/
+
+.env
+.DS_Store
+`,
+        'README.md': `# ${projectName}
+
+High-performance Go microservice API built with Go Fiber and Express-inspired routing.
+
+## 🚀 Getting Started
+
+### 1. Download dependencies
+\`\`\`bash
+go mod tidy
+\`\`\`
+
+### 2. Start development server
+\`\`\`bash
+go run main.go
+\`\`\`
+Server runs at [http://localhost:8080](http://localhost:8080).
+- Health check: [http://localhost:8080/health](http://localhost:8080/health)
+- Users API: [http://localhost:8080/api/users](http://localhost:8080/api/users)
 `,
         'coderstrim.config.json': JSON.stringify(
           {
@@ -1088,6 +1456,58 @@ export async function checkBackendHealth(): Promise<{ status: string; message?: 
           null,
           2
         ),
+        '.gitignore': `# Expo
+.expo/
+dist/
+web-build/
+node_modules/
+
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# macOS
+.DS_Store
+`,
+        'assets/README.md': `# App Assets
+
+Place your app icons and splash screens here:
+- \`icon.png\`: App icon (1024x1024 px)
+- \`splash.png\`: Splash screen image
+- \`adaptive-icon.png\`: Android adaptive icon foreground (432x432 px)
+`,
+        'README.md': `# ${projectName}
+
+Universal mobile application for iOS, Android, and Web built with React Native and Expo Router.
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
+\`\`\`bash
+npm install
+\`\`\`
+
+### 2. Start development server
+\`\`\`bash
+# Web browser preview
+npm run dev
+# or
+npx expo start --web
+
+# Android device / emulator
+npm run android
+
+# iOS simulator (macOS required)
+npm run ios
+\`\`\`
+
+### 📱 Preview with Expo Go
+Scan the terminal QR code with your **Expo Go** mobile app (available on Google Play Store and Apple App Store).
+`,
         'coderstrim.config.json': JSON.stringify(
           {
             plugins: [],
@@ -1240,6 +1660,73 @@ export default {
   plugins: [],
 };
 `,
+        'tsconfig.json': JSON.stringify(
+          {
+            compilerOptions: {
+              target: 'ES2020',
+              useDefineForClassFields: true,
+              lib: ['ES2020', 'DOM', 'DOM.Iterable'],
+              module: 'ESNext',
+              skipLibCheck: true,
+              moduleResolution: 'bundler',
+              resolveJsonModule: true,
+              isolatedModules: true,
+              moduleDetection: 'force',
+              noEmit: true,
+              jsx: 'react-jsx',
+              strict: true,
+              noUnusedLocals: true,
+              noUnusedParameters: true,
+              noFallthroughCasesInSwitch: true,
+            },
+            include: ['src'],
+          },
+          null,
+          2
+        ),
+        '.gitignore': `# Dependencies
+node_modules
+dist
+dist-ssr
+*.local
+
+# Capacitor native build caches
+.DS_Store
+.env
+`,
+        'README.md': `# ${projectName}
+
+Cross-platform mobile hybrid application built with React 19, Tailwind CSS, and Capacitor.
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
+\`\`\`bash
+npm install
+\`\`\`
+
+### 2. Start web development preview
+\`\`\`bash
+npm run dev
+\`\`\`
+
+### 3. Sync to Native Mobile Projects
+\`\`\`bash
+# Build web assets first
+npm run build
+
+# Add native platforms (first time)
+npx cap add android
+npx cap add ios
+
+# Sync web assets to native container
+npx cap sync
+
+# Open in Android Studio / Xcode
+npx cap open android
+npx cap open ios
+\`\`\`
+`,
         'coderstrim.config.json': JSON.stringify(
           {
             plugins: ['@coderstrim/plugin-tailwind'],
@@ -1260,7 +1747,7 @@ export default {
       defaultPort: 8080,
       files: {
         'pubspec.yaml': `name: ${projectName.replace(/-/g, '_')}
-description: "A new Flutter project created with CodersTrim."
+description: "A production-grade Flutter application scaffolded with CodersTrim."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -1271,6 +1758,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:
@@ -1280,7 +1768,500 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 `,
+        'analysis_options.yaml': `include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    avoid_print: false
+`,
+        '.gitignore': `# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/frontend_server.dart.snapshot
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# Android related
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+
+# iOS/XCode related
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vagrant/
+**/ios/**/DerivedData/
+**/ios/**/Icon?
+**/ios/**/Pods/
+**/ios/**/GeneratedPluginRegistrant.h
+**/ios/**/GeneratedPluginRegistrant.m
+**/ios/**/frameworks
+**/ios/**/*.flutter-plugins
+`,
+        'README.md': `# ${projectName}
+
+Multi-platform mobile and web application built with Flutter & Dart.
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
+\`\`\`bash
+flutter pub get
+\`\`\`
+
+### 2. Run application
+\`\`\`bash
+# Run in Chrome (Web preview)
+flutter run -d chrome
+
+# Run on connected Android / iOS device or emulator
+flutter run
+\`\`\`
+
+### 3. Build APK for Android
+\`\`\`bash
+flutter build apk --release
+\`\`\`
+The APK will be generated at \`build/app/outputs/flutter-apk/app-release.apk\`.
+`,
+        'android/settings.gradle': `pluginManagement {
+    def flutterSdkPath = {
+        def properties = new Properties()
+        file("local.properties").withInputStream { properties.load(it) }
+        def flutterSdkPath = properties.getProperty("flutter.sdk")
+        assert flutterSdkPath != null : "flutter.sdk not set in local.properties"
+        return flutterSdkPath
+    }()
+
+    includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    id "com.android.application" version "8.7.0" apply false
+    id "org.jetbrains.kotlin.android" version "2.0.0" apply false
+}
+
+include ":app"
+`,
+        'android/build.gradle': `allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "\${rootProject.buildDir}/\${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
+`,
+        'android/app/build.gradle': `plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+android {
+    namespace "com.coderstrim.${projectName.replace(/[^a-zA-Z0-9]/g, '')}"
+    compileSdk 34
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "com.coderstrim.${projectName.replace(/[^a-zA-Z0-9]/g, '')}"
+        minSdk 21
+        targetSdk 34
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+`,
+        'android/app/src/main/AndroidManifest.xml': `<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application
+        android:label="${projectName}"
+        android:name="\${applicationName}"
+        android:icon="@mipmap/ic_launcher">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+    </application>
+</manifest>
+`,
+        'ios/Runner/Info.plist': `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>${projectName}</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>${projectName}</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+</dict>
+</plist>
+`,
+        'ios/Runner/AppDelegate.swift': `import Flutter
+import UIKit
+
+@main
+@objc class AppDelegate: FlutterAppDelegate {
+  override func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+  ) -> Bool {
+    GeneratedPluginRegistrant.register(with: self)
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+}
+`,
+        'web/index.html': `<!DOCTYPE html>
+<html>
+<head>
+  <base href="/">
+  <meta charset="UTF-8">
+  <title>${projectName}</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body style="background-color: #020617; margin: 0;">
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
+`,
+        'web/manifest.json': JSON.stringify(
+          {
+            name: projectName,
+            short_name: projectName,
+            start_url: '.',
+            display: 'standalone',
+            background_color: '#020617',
+            theme_color: '#818cf8',
+            description: 'Flutter application scaffolded with CodersTrim',
+            orientation: 'portrait-primary',
+            prefer_related_applications: false,
+          },
+          null,
+          2
+        ),
+        'lib/models/app_info.dart': `class AppInfo {
+  final String name;
+  final String framework;
+  final String status;
+
+  const AppInfo({
+    required this.name,
+    required this.framework,
+    required this.status,
+  });
+}
+`,
+        'lib/services/api_service.dart': `import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+class ApiService {
+  static const String baseUrl = 'http://localhost:8000';
+
+  static Future<Map<String, dynamic>> checkHealth() async {
+    try {
+      final response = await http.get(Uri.parse('\$baseUrl/health')).timeout(
+        const Duration(seconds: 3),
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      }
+      return {'status': 'unreachable', 'message': 'HTTP \${response.statusCode}'};
+    } catch (_) {
+      return {'status': 'offline', 'message': 'No backend running on port 8000'};
+    }
+  }
+}
+`,
+        'lib/screens/home_screen.dart': `import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+
+class HomeScreen extends StatefulWidget {
+  final String title;
+
+  const HomeScreen({super.key, required this.title});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String _backendStatus = 'Checking...';
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkStatus();
+  }
+
+  Future<void> _checkStatus() async {
+    setState(() => _isLoading = true);
+    final res = await ApiService.checkHealth();
+    setState(() {
+      _backendStatus = res['message'] ?? res['status'] ?? 'Offline';
+      _isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF020617),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            padding: const EdgeInsets.all(32.0),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0F172A),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: const Color(0xFF1E293B)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF818CF8).withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Text(
+                    'FLUTTER MOBILE & WEB',
+                    style: TextStyle(
+                      color: Color(0xFF818CF8),
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  widget.title,
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Multi-platform app with native Android, iOS, and Web deployment support.',
+                  style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8), height: 1.5),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF020617),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFF334155)),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'BACKEND STATUS',
+                        style: TextStyle(
+                          color: Color(0xFF64748B),
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      _isLoading
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF34D399)),
+                            )
+                          : Text(
+                              _backendStatus,
+                              style: const TextStyle(
+                                color: Color(0xFF34D399),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  onPressed: _isLoading ? null : _checkStatus,
+                  icon: const Icon(Icons.refresh, size: 16),
+                  label: const Text('Refresh Status'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4F46E5),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+`,
         'lib/main.dart': `import 'package:flutter/material.dart';
+import 'screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -1297,77 +2278,21 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF020617),
         cardColor: const Color(0xFF0F172A),
       ),
-      home: const HomeScreen(),
+      home: const HomeScreen(title: '${projectName}'),
       debugShowCheckedModeBanner: false,
     );
   }
 }
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 380),
-            padding: const EdgeInsets.all(32.0),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0F172A),
-              borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: const Color(0xFF1E293B)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'FLUTTER MOBILE',
-                  style: TextStyle(
-                    color: Color(0xFF818CF8),
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  '${projectName}',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'Scaffolded with CodersTrim. Ready for Android, iOS, and Web deployment.',
-                  style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 `,
-        'web/index.html': `<!DOCTYPE html>
-<html>
-<head>
-  <base href="/">
-  <meta charset="UTF-8">
-  <title>${projectName}</title>
-</head>
-<body style="background-color: #020617; margin: 0;">
-  <script src="flutter_bootstrap.js" async></script>
-</body>
-</html>
+        'test/widget_test.dart': `import 'package:flutter_test/flutter_test.dart';
+import 'package:${projectName.replace(/-/g, '_')}/main.dart';
+
+void main() {
+  testWidgets('App renders correctly test', (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
+    expect(find.text('${projectName}'), findsOneWidget);
+  });
+}
 `,
         'coderstrim.config.json': JSON.stringify(
           {
@@ -1409,6 +2334,34 @@ create policy "Users can insert their own profile." on public.profiles for inser
 `,
         '.env.example': `SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
+`,
+        '.gitignore': `.env
+.env.local
+.temp/
+`,
+        'README.md': `# ${projectName} (Supabase BaaS)
+
+Supabase backend configuration with PostgreSQL schema migrations, Row Level Security (RLS), and pre-configured client SDK.
+
+## 🚀 Getting Started
+
+### 1. Configure Environment
+Copy \`.env.example\` to \`.env\` and fill in your Supabase credentials:
+\`\`\`bash
+cp .env.example .env
+\`\`\`
+
+### 2. Connect with Supabase CLI (Optional)
+\`\`\`bash
+# Login to Supabase
+npx supabase login
+
+# Link your remote Supabase project
+npx supabase link --project-ref your-project-ref
+
+# Push migrations to database
+npx supabase db push
+\`\`\`
 `,
         'coderstrim.config.json': JSON.stringify(
           {
@@ -1454,8 +2407,60 @@ service cloud.firestore {
   }
 }
 `,
+        'firebase.json': JSON.stringify(
+          {
+            firestore: {
+              rules: 'firestore.rules',
+            },
+            emulators: {
+              auth: {
+                port: 9099,
+              },
+              firestore: {
+                port: 8080,
+              },
+              ui: {
+                enabled: true,
+                port: 4000,
+              },
+            },
+          },
+          null,
+          2
+        ),
         '.env.example': `FIREBASE_API_KEY=AIzaSyYourApiKey
 FIREBASE_PROJECT_ID=${projectName}
+`,
+        '.gitignore': `.firebase/
+firebase-debug.log
+firestore-debug.log
+.env
+.env.local
+`,
+        'README.md': `# ${projectName} (Firebase BaaS)
+
+Google Firebase backend configuration with Firestore security rules and client SDK.
+
+## 🚀 Getting Started
+
+### 1. Configure Environment
+Copy \`.env.example\` to \`.env\` and fill in your Firebase API key and project ID:
+\`\`\`bash
+cp .env.example .env
+\`\`\`
+
+### 2. Firebase CLI Commands
+\`\`\`bash
+# Install Firebase Tools
+npm install -g firebase-tools
+firebase login
+
+# Start local emulators
+firebase emulators:start
+
+# Deploy rules to cloud
+firebase deploy --only firestore:rules
+\`\`\`
 `,
         'coderstrim.config.json': JSON.stringify(
           {
