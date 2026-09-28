@@ -57,4 +57,11 @@ describe('@coderstrim/plugin-tailwind', () => {
     expect(issue3?.suggested).toBe('bg-blue-500');
     expect(templateCode.slice(issue3!.range[0], issue3!.range[1])).toBe('bg-blu-500');
   });
+
+  it('contributes dev-toolbar component among available UI components', () => {
+    const devToolbar = tailwindPlugin.contributes?.uiComponents?.find((c) => c.id === 'dev-toolbar');
+    expect(devToolbar).toBeDefined();
+    expect(devToolbar?.name).toBe('CodersTrim Dev Toolbar');
+    expect(devToolbar?.template).toContain('CodersTrimDevToolbar');
+  });
 });
