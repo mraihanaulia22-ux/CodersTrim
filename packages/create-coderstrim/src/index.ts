@@ -24,8 +24,16 @@ export function createBootstrapProgram(): Command {
 
       let template = options?.template?.toLowerCase();
       let mode: 'standalone' | 'fullstack' = 'standalone';
-      let frontendTemplate: 'react' | 'nextjs' | 'none' | undefined;
-      let backendTemplate: 'fastapi' | 'laravel' | 'laravel-api' | 'gofiber' | 'none' | undefined;
+      let frontendTemplate: 'react' | 'nextjs' | 'expo' | 'capacitor' | 'flutter' | 'none' | undefined;
+      let backendTemplate:
+        | 'fastapi'
+        | 'laravel'
+        | 'laravel-api'
+        | 'gofiber'
+        | 'supabase'
+        | 'firebase'
+        | 'none'
+        | undefined;
 
       if (!template) {
         const archChoice = await select({
@@ -54,6 +62,22 @@ export function createBootstrapProgram(): Command {
             message: 'Select a Recommended Fullstack Stack:',
             choices: [
               {
+                name: '📱 [Modern Mobile] Expo (React Native) + Supabase (PostgreSQL BaaS + Auth)',
+                value: 'rec-expo-supabase',
+              },
+              {
+                name: '⚡ [Native Performance] Expo (React Native) + Go Fiber (Golang Microservice)',
+                value: 'rec-expo-gofiber',
+              },
+              {
+                name: '🐍 [AI & Mobile] Expo (React Native) + FastAPI (Python Backend)',
+                value: 'rec-expo-fastapi',
+              },
+              {
+                name: '🌐 [Hybrid Mobile/Web] Capacitor (React 19) + FastAPI (Python Backend)',
+                value: 'rec-capacitor-fastapi',
+              },
+              {
                 name: '⚡ [Modern Web] React 19 (Vite) + FastAPI (Python Backend + SQLite)',
                 value: 'rec-react-fastapi',
               },
@@ -76,7 +100,23 @@ export function createBootstrapProgram(): Command {
             ],
           });
 
-          if (stackChoice === 'rec-react-fastapi') {
+          if (stackChoice === 'rec-expo-supabase') {
+            mode = 'fullstack';
+            frontendTemplate = 'expo';
+            backendTemplate = 'supabase';
+          } else if (stackChoice === 'rec-expo-gofiber') {
+            mode = 'fullstack';
+            frontendTemplate = 'expo';
+            backendTemplate = 'gofiber';
+          } else if (stackChoice === 'rec-expo-fastapi') {
+            mode = 'fullstack';
+            frontendTemplate = 'expo';
+            backendTemplate = 'fastapi';
+          } else if (stackChoice === 'rec-capacitor-fastapi') {
+            mode = 'fullstack';
+            frontendTemplate = 'capacitor';
+            backendTemplate = 'fastapi';
+          } else if (stackChoice === 'rec-react-fastapi') {
             mode = 'fullstack';
             frontendTemplate = 'react';
             backendTemplate = 'fastapi';
@@ -97,21 +137,26 @@ export function createBootstrapProgram(): Command {
           }
         } else if (archChoice === 'custom') {
           frontendTemplate = await select({
-            message: 'Step 1: Choose your Frontend:',
+            message: 'Step 1: Choose your Client / Frontend:',
             choices: [
-              { name: 'React 19 + Vite (Tailwind CSS SPA)', value: 'react' },
-              { name: 'Next.js 15+ (App Router Client)', value: 'nextjs' },
+              { name: 'React 19 + Vite (Tailwind CSS SPA) [Web]', value: 'react' },
+              { name: 'Next.js 15+ (App Router Client) [Web]', value: 'nextjs' },
+              { name: 'Expo (React Native + TypeScript + File Routing) [Mobile iOS/Android/Web]', value: 'expo' },
+              { name: 'Capacitor (React 19 + Tailwind Mobile Hybrid) [Android/iOS]', value: 'capacitor' },
+              { name: 'Flutter (Dart Cross-Platform Native Mobile & Web) [Mobile/Web]', value: 'flutter' },
               { name: 'None (Backend / Monolith Only)', value: 'none' },
             ],
           });
 
           backendTemplate = await select({
-            message: 'Step 2: Choose your Backend:',
+            message: 'Step 2: Choose your Backend / BaaS:',
             choices: [
               { name: 'FastAPI (Python 3.10+ Async API + SQLite)', value: 'fastapi' },
               { name: 'Laravel 11 (PHP Modular REST API + SQLite)', value: 'laravel-api' },
               { name: 'Go Fiber (High-Performance Golang API)', value: 'gofiber' },
-              { name: 'None (Frontend Only)', value: 'none' },
+              { name: 'Supabase (PostgreSQL BaaS + Auth + RLS Migrations)', value: 'supabase' },
+              { name: 'Firebase (Google Firestore + Auth + Cloud Functions)', value: 'firebase' },
+              { name: 'None (Frontend / Mobile Only)', value: 'none' },
             ],
           });
 
@@ -140,6 +185,21 @@ export function createBootstrapProgram(): Command {
                 description: 'Production React framework with server-side rendering & server actions',
               },
               {
+                name: 'Expo (React Native + TypeScript + Expo Router) [Mobile iOS/Android/Web]',
+                value: 'expo',
+                description: 'Cross-platform mobile application with file-based routing and Metro bundler',
+              },
+              {
+                name: 'Capacitor (React 19 + Tailwind Mobile Hybrid) [Android/iOS]',
+                value: 'capacitor',
+                description: 'Universal web-to-mobile hybrid container for Android & iOS APKs',
+              },
+              {
+                name: 'Flutter (Google Dart Mobile & Web App) [Mobile/Web]',
+                value: 'flutter',
+                description: 'High performance native ARM app with Skia rendering',
+              },
+              {
                 name: 'Laravel 11+ (Blade MVC + Tailwind + SQLite) [Fullstack PHP]',
                 value: 'laravel',
                 description: 'Modern PHP web framework with modular routing and templating',
@@ -154,12 +214,46 @@ export function createBootstrapProgram(): Command {
                 value: 'gofiber',
                 description: 'Blazing fast Go API with Express-like routing',
               },
+              {
+                name: 'Supabase (PostgreSQL BaaS + Auth + SQL Schema)',
+                value: 'supabase',
+                description: 'Open-source Firebase alternative with PostgreSQL, RLS policies & client SDK',
+              },
+              {
+                name: 'Firebase (Google Firestore + Auth Schema)',
+                value: 'firebase',
+                description: 'Google mobile platform with Firestore, Auth & Cloud Messaging',
+              },
             ],
           });
         }
       } else {
         // Flag-driven presets
-        if (template === 'react-fastapi') {
+        if (template === 'expo-supabase') {
+          mode = 'fullstack';
+          frontendTemplate = 'expo';
+          backendTemplate = 'supabase';
+        } else if (template === 'expo-gofiber') {
+          mode = 'fullstack';
+          frontendTemplate = 'expo';
+          backendTemplate = 'gofiber';
+        } else if (template === 'expo-fastapi') {
+          mode = 'fullstack';
+          frontendTemplate = 'expo';
+          backendTemplate = 'fastapi';
+        } else if (template === 'expo-laravel' || template === 'expo-laravel-api') {
+          mode = 'fullstack';
+          frontendTemplate = 'expo';
+          backendTemplate = 'laravel-api';
+        } else if (template === 'capacitor-fastapi') {
+          mode = 'fullstack';
+          frontendTemplate = 'capacitor';
+          backendTemplate = 'fastapi';
+        } else if (template === 'capacitor-supabase') {
+          mode = 'fullstack';
+          frontendTemplate = 'capacitor';
+          backendTemplate = 'supabase';
+        } else if (template === 'react-fastapi') {
           mode = 'fullstack';
           frontendTemplate = 'react';
           backendTemplate = 'fastapi';

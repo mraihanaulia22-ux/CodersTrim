@@ -129,6 +129,114 @@ describe('ProjectGenerator Service', () => {
     expect(apiFile).toContain('http://localhost:8080');
   });
 
+  it('scaffolds an Expo React Native mobile project with Expo Router and Metro config', async () => {
+    const result = await generateProject({
+      projectName: 'my-expo-app',
+      templateId: 'expo',
+      cwd: tempDir,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.filesCreated).toContain('package.json');
+    expect(result.filesCreated).toContain('app.json');
+    expect(result.filesCreated).toContain('app/index.tsx');
+    expect(result.filesCreated).toContain('services/api.ts');
+
+    const appJson = await fs.readFile(path.join(tempDir, 'my-expo-app', 'app.json'), 'utf-8');
+    expect(appJson).toContain('my-expo-app');
+  });
+
+  it('scaffolds a Capacitor hybrid mobile project with React 19 and mobile sync scripts', async () => {
+    const result = await generateProject({
+      projectName: 'my-capacitor-app',
+      templateId: 'capacitor',
+      cwd: tempDir,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.filesCreated).toContain('package.json');
+    expect(result.filesCreated).toContain('capacitor.config.json');
+    expect(result.filesCreated).toContain('src/App.tsx');
+    expect(result.filesCreated).toContain('src/services/api.ts');
+  });
+
+  it('scaffolds a Flutter Dart mobile project with Skia/Web canvas', async () => {
+    const result = await generateProject({
+      projectName: 'my-flutter-app',
+      templateId: 'flutter',
+      cwd: tempDir,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.filesCreated).toContain('pubspec.yaml');
+    expect(result.filesCreated).toContain('lib/main.dart');
+    expect(result.filesCreated).toContain('web/index.html');
+  });
+
+  it('scaffolds a Supabase BaaS project with migrations and client config', async () => {
+    const result = await generateProject({
+      projectName: 'my-supabase-backend',
+      templateId: 'supabase',
+      cwd: tempDir,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.filesCreated).toContain('services/supabase.ts');
+    expect(result.filesCreated).toContain('supabase/migrations/20260101_initial_schema.sql');
+    expect(result.filesCreated).toContain('.env.example');
+  });
+
+  it('scaffolds a mobile fullstack project (Expo + Supabase) with client injection and RLS schema', async () => {
+    const result = await generateProject({
+      projectName: 'my-mobile-fullstack',
+      mode: 'fullstack',
+      frontendTemplate: 'expo',
+      backendTemplate: 'supabase',
+      cwd: tempDir,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.filesCreated).toContain('frontend/app/index.tsx');
+    expect(result.filesCreated).toContain('frontend/services/supabase.ts');
+    expect(result.filesCreated).toContain('backend/supabase/migrations/20260101_initial_schema.sql');
+    expect(result.filesCreated).toContain('coderstrim.config.json');
+
+    const configContent = await fs.readFile(
+      path.join(tempDir, 'my-mobile-fullstack', 'coderstrim.config.json'),
+      'utf-8'
+    );
+    const parsed = JSON.parse(configContent);
+    expect(parsed.frontend.framework).toBe('expo');
+    expect(parsed.frontend.port).toBe(8081);
+    expect(parsed.backend.framework).toBe('supabase');
+  });
+
+  it('scaffolds a mobile fullstack project (Expo + Go Fiber) with port 8080 API wiring and 8081 CORS', async () => {
+    const result = await generateProject({
+      projectName: 'my-expo-fiber',
+      mode: 'fullstack',
+      frontendTemplate: 'expo',
+      backendTemplate: 'gofiber',
+      cwd: tempDir,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.filesCreated).toContain('frontend/services/api.ts');
+    expect(result.filesCreated).toContain('backend/main.go');
+
+    const apiFile = await fs.readFile(
+      path.join(tempDir, 'my-expo-fiber', 'frontend/services/api.ts'),
+      'utf-8'
+    );
+    expect(apiFile).toContain('http://localhost:8080');
+
+    const mainGo = await fs.readFile(
+      path.join(tempDir, 'my-expo-fiber', 'backend/main.go'),
+      'utf-8'
+    );
+    expect(mainGo).toContain('http://localhost:8081');
+  });
+
   it('prevents accidental overwrite if target directory is non-empty', async () => {
     const existingDir = path.join(tempDir, 'occupied-app');
     await fs.mkdir(existingDir, { recursive: true });

@@ -6,14 +6,32 @@ import { getStarterTemplates, StarterTemplate } from './starter-templates.js';
 
 const execAsync = promisify(exec);
 
-export type SupportedTemplateId = 'react' | 'nextjs' | 'laravel' | 'laravel-api' | 'fastapi' | 'gofiber';
+export type SupportedTemplateId =
+  | 'react'
+  | 'nextjs'
+  | 'laravel'
+  | 'laravel-api'
+  | 'fastapi'
+  | 'gofiber'
+  | 'expo'
+  | 'capacitor'
+  | 'flutter'
+  | 'supabase'
+  | 'firebase';
 
 export interface ProjectGeneratorOptions {
   projectName: string;
   templateId?: SupportedTemplateId;
   mode?: 'standalone' | 'fullstack';
-  frontendTemplate?: 'react' | 'nextjs' | 'none';
-  backendTemplate?: 'fastapi' | 'laravel' | 'laravel-api' | 'gofiber' | 'none';
+  frontendTemplate?: 'react' | 'nextjs' | 'expo' | 'capacitor' | 'flutter' | 'none';
+  backendTemplate?:
+    | 'fastapi'
+    | 'laravel'
+    | 'laravel-api'
+    | 'gofiber'
+    | 'supabase'
+    | 'firebase'
+    | 'none';
   cwd: string;
 }
 
@@ -81,14 +99,14 @@ export async function generateProject(
       };
     }
 
-    const bePort = beTpl.defaultPort ?? 8000;
-    const fePort = feTpl.defaultPort ?? 5173;
+    const fePort = feTpl.defaultPort ?? (feKey === 'expo' ? 8081 : feKey === 'flutter' ? 8080 : 5173);
+    const bePort = beTpl.defaultPort ?? (beKey === 'supabase' ? 54321 : beKey === 'firebase' ? 9099 : 8000);
 
     // 1. Write frontend files into frontend/
     for (const [relPath, content] of Object.entries(feTpl.files)) {
       let finalContent = content;
       // Wire API client port to backend port
-      if (relPath === 'src/services/api.ts') {
+      if (relPath === 'src/services/api.ts' || relPath === 'services/api.ts') {
         finalContent = finalContent.replace(
           /http:\/\/localhost:\d+/g,
           `http://localhost:${bePort}`
@@ -98,6 +116,27 @@ export async function generateProject(
       await fs.mkdir(path.dirname(fullPath), { recursive: true });
       await fs.writeFile(fullPath, finalContent, 'utf-8');
       filesCreated.push(path.join('frontend', relPath).replace(/\\/g, '/'));
+    }
+
+    // Direct BaaS client configuration injection:
+    if (beKey === 'supabase') {
+      const supabaseClient = beTpl.files['services/supabase.ts'];
+      if (supabaseClient) {
+        const dest = feKey === 'expo' ? 'services/supabase.ts' : 'src/services/supabase.ts';
+        const fullPath = path.join(projectPath, 'frontend', dest);
+        await fs.mkdir(path.dirname(fullPath), { recursive: true });
+        await fs.writeFile(fullPath, supabaseClient, 'utf-8');
+        filesCreated.push(path.join('frontend', dest).replace(/\\/g, '/'));
+      }
+    } else if (beKey === 'firebase') {
+      const firebaseClient = beTpl.files['services/firebase.ts'];
+      if (firebaseClient) {
+        const dest = feKey === 'expo' ? 'services/firebase.ts' : 'src/services/firebase.ts';
+        const fullPath = path.join(projectPath, 'frontend', dest);
+        await fs.mkdir(path.dirname(fullPath), { recursive: true });
+        await fs.writeFile(fullPath, firebaseClient, 'utf-8');
+        filesCreated.push(path.join('frontend', dest).replace(/\\/g, '/'));
+      }
     }
 
     // 2. Write backend files into backend/
@@ -118,7 +157,12 @@ export async function generateProject(
       filesCreated.push(path.join('backend', relPath).replace(/\\/g, '/'));
     }
 
-    // 3. Determine backend start command
+    // 3. Determine frontend & backend start commands
+    let feCommand = 'npm run dev';
+    if (feKey === 'flutter') {
+      feCommand = 'flutter run -d chrome';
+    }
+
     let beCommand = 'npm run dev';
     if (beKey === 'fastapi') {
       beCommand = 'uvicorn main:app --reload --port 8000';
@@ -126,6 +170,10 @@ export async function generateProject(
       beCommand = 'php artisan serve --port=8000';
     } else if (beKey === 'gofiber') {
       beCommand = 'go run main.go';
+    } else if (beKey === 'supabase') {
+      beCommand = 'echo [Supabase BaaS] Connected via client SDK. Local schema in supabase/migrations/';
+    } else if (beKey === 'firebase') {
+      beCommand = 'echo [Firebase BaaS] Connected via client SDK. Security rules in firestore.rules';
     }
 
     // 4. Write Root Monorepo Configurations
@@ -135,7 +183,7 @@ export async function generateProject(
       frontend: {
         framework: feKey,
         directory: 'frontend',
-        command: 'npm run dev',
+        command: feCommand,
         port: fePort,
       },
       backend: {
@@ -199,18 +247,23 @@ export async function generateProject(
     filesCreated.push('.vscode/settings.json', '.vscode/extensions.json');
 
     // 7. Root README.md
+    const isBaaS = beKey === 'supabase' || beKey === 'firebase';
+    const beDesc = isBaaS
+      ? `${beTpl.name} (\`backend/\`) - Cloud BaaS with pre-configured client & schema migrations`
+      : `${beTpl.name} (\`backend/\`) - Running on http://localhost:${bePort}`;
+
     const readmeContent = `# ${projectName}
 
 Fullstack application created with [CodersTrim](https://github.com/mraihanaulia22-ux/CodersTrim).
 
 ## Architecture
-- **Frontend**: ${feTpl.name} (\`frontend/\`) - Running on http://localhost:${fePort}
-- **Backend**: ${beTpl.name} (\`backend/\`) - Running on http://localhost:${bePort}
-- **API Wiring**: Pre-configured with automatic CORS and \`frontend/src/services/api.ts\`.
+- **Frontend / Client**: ${feTpl.name} (\`frontend/\`) - Running on http://localhost:${fePort}
+- **Backend**: ${beDesc}
+- **API Wiring**: Pre-configured with automatic CORS and API client wiring.
 
 ## 🚀 Quick Start (Single Terminal)
 
-Run both Frontend and Backend concurrently with built-in process watchdog:
+Run both Client and Backend concurrently with built-in process watchdog:
 \`\`\`bash
 coderstrim dev
 # or
@@ -234,6 +287,7 @@ npm run dev
     nextSteps.push(
       `Start Fullstack: cd ${projectName} && coderstrim dev (or npm run dev)`
     );
+
   } else {
     // Standalone Single App
     let activeKey = options.templateId;
