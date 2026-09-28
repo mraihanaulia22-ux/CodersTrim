@@ -97,7 +97,14 @@ describe('ProjectGenerator Service', () => {
     expect(result.filesCreated).toContain('backend/requirements.txt');
     expect(result.filesCreated).toContain('backend/main.py');
     expect(result.filesCreated).toContain('coderstrim.config.json');
+    expect(result.filesCreated).toContain('package.json');
+    expect(result.filesCreated).toContain('.vscode/settings.json');
+    expect(result.filesCreated).toContain('.vscode/extensions.json');
     expect(result.filesCreated).toContain('README.md');
+
+    // Verify root package.json contains "coderstrim dev"
+    const rootPkg = await fs.readFile(path.join(tempDir, 'my-fullstack-app', 'package.json'), 'utf-8');
+    expect(rootPkg).toContain('coderstrim dev');
 
     // Verify API client points to port 8000
     const apiFile = await fs.readFile(path.join(tempDir, 'my-fullstack-app', 'frontend/src/services/api.ts'), 'utf-8');

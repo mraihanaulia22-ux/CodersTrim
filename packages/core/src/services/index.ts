@@ -10,3 +10,4 @@ export * from './port-guard.js';
 export * from './doctor-pipeline.js';
 export * from './starter-templates.js';
 export * from './project-generator.js';
+export * from './dev-runner.js';

@@ -118,12 +118,32 @@ export async function generateProject(
       filesCreated.push(path.join('backend', relPath).replace(/\\/g, '/'));
     }
 
-    // 3. Write Root Monorepo Configurations
+    // 3. Determine backend start command
+    let beCommand = 'npm run dev';
+    if (beKey === 'fastapi') {
+      beCommand = 'uvicorn main:app --reload --port 8000';
+    } else if (beKey === 'laravel' || beKey === 'laravel-api') {
+      beCommand = 'php artisan serve --port=8000';
+    } else if (beKey === 'gofiber') {
+      beCommand = 'go run main.go';
+    }
+
+    // 4. Write Root Monorepo Configurations
     const rootConfig = {
       name: projectName,
       mode: 'fullstack',
-      frontend: { framework: feKey, port: fePort },
-      backend: { framework: beKey, port: bePort },
+      frontend: {
+        framework: feKey,
+        directory: 'frontend',
+        command: 'npm run dev',
+        port: fePort,
+      },
+      backend: {
+        framework: beKey,
+        directory: 'backend',
+        command: beCommand,
+        port: bePort,
+      },
       plugins: ['@coderstrim/plugin-tailwind'],
     };
 
@@ -131,6 +151,54 @@ export async function generateProject(
     await fs.writeFile(rootConfigPath, JSON.stringify(rootConfig, null, 2), 'utf-8');
     filesCreated.push('coderstrim.config.json');
 
+    // 5. Root package.json for zero-effort `npm run dev`
+    const rootPackageJson = {
+      name: projectName,
+      private: true,
+      scripts: {
+        dev: 'coderstrim dev',
+        'dev:frontend': 'coderstrim dev -f',
+        'dev:backend': 'coderstrim dev -b',
+      },
+    };
+    await fs.writeFile(
+      path.join(projectPath, 'package.json'),
+      JSON.stringify(rootPackageJson, null, 2),
+      'utf-8'
+    );
+    filesCreated.push('package.json');
+
+    // 6. IDE Workspace (.vscode) configuration for seamless fullstack dev
+    const vscodeSettings = {
+      'eslint.workingDirectories': ['frontend'],
+      'typescript.tsdk': 'frontend/node_modules/typescript/lib',
+      'tailwindCSS.experimental.classRegex': [
+        ['cva\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]'],
+        ['cx\\(([^)]*)\\)', '(?:\'|"|`)([^\']*)(?:\'|"|`)'],
+      ],
+    };
+    const vscodeExtensions = {
+      recommendations: [
+        'bradlc.vscode-tailwindcss',
+        'dbaeumer.vscode-eslint',
+      ],
+    };
+
+    const vscodeDir = path.join(projectPath, '.vscode');
+    await fs.mkdir(vscodeDir, { recursive: true });
+    await fs.writeFile(
+      path.join(vscodeDir, 'settings.json'),
+      JSON.stringify(vscodeSettings, null, 2),
+      'utf-8'
+    );
+    await fs.writeFile(
+      path.join(vscodeDir, 'extensions.json'),
+      JSON.stringify(vscodeExtensions, null, 2),
+      'utf-8'
+    );
+    filesCreated.push('.vscode/settings.json', '.vscode/extensions.json');
+
+    // 7. Root README.md
     const readmeContent = `# ${projectName}
 
 Fullstack application created with [CodersTrim](https://github.com/mraihanaulia22-ux/CodersTrim).
@@ -140,27 +208,31 @@ Fullstack application created with [CodersTrim](https://github.com/mraihanaulia2
 - **Backend**: ${beTpl.name} (\`backend/\`) - Running on http://localhost:${bePort}
 - **API Wiring**: Pre-configured with automatic CORS and \`frontend/src/services/api.ts\`.
 
-## Getting Started
+## 🚀 Quick Start (Single Terminal)
 
-### 1. Start the Backend
+Run both Frontend and Backend concurrently with built-in process watchdog:
 \`\`\`bash
-cd backend
-${beTpl.nextSteps.slice(1).join('\n')}
+coderstrim dev
+# or
+npm run dev
 \`\`\`
 
-### 2. Start the Frontend
-\`\`\`bash
-cd frontend
-${feTpl.nextSteps.slice(1).join('\n')}
-\`\`\`
+### Granular Controls:
+- Run Frontend only: \`coderstrim dev -f\`
+- Run Backend only: \`coderstrim dev -b\`
+
+### Interactive Hotkeys (While running):
+- Press \`f\` to toggle/restart Frontend
+- Press \`b\` to toggle/restart Backend
+- Press \`r\` to restart both
+- Press \`q\` to quit cleanly
 `;
     const readmePath = path.join(projectPath, 'README.md');
     await fs.writeFile(readmePath, readmeContent, 'utf-8');
     filesCreated.push('README.md');
 
     nextSteps.push(
-      `Backend: cd ${projectName}/backend && ${beTpl.nextSteps.slice(1).join(' && ')}`,
-      `Frontend: cd ${projectName}/frontend && ${feTpl.nextSteps.slice(1).join(' && ')}`
+      `Start Fullstack: cd ${projectName} && coderstrim dev (or npm run dev)`
     );
   } else {
     // Standalone Single App

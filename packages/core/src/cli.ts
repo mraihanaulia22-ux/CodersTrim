@@ -8,6 +8,7 @@ import { executeSafeInjectionPipeline } from './services/safe-injection-pipeline
 import { executeDoctorPipeline } from './services/doctor-pipeline.js';
 import { checkPortAvailability, diagnoseCommonPorts } from './services/port-guard.js';
 import { generateProject } from './services/project-generator.js';
+import { DevRunner } from './services/dev-runner.js';
 import { loadConfig } from './plugins/config-loader.js';
 import { defaultRegistry } from './plugins/registry.js';
 import { createPluginContext } from './plugins/context-factory.js';
@@ -215,6 +216,28 @@ export function createProgram(): Command {
         console.log(`   ${step}`);
       }
       console.log('');
+    });
+
+  // Command: dev (alias: run)
+  program
+    .command('dev')
+    .alias('run')
+    .description('Start unified development server with Process Watchdog, log multiplexing, and hotkeys')
+    .option('-f, --frontend', 'Start only the frontend development server')
+    .option('-b, --backend', 'Start only the backend development server')
+    .option('--no-watchdog', 'Disable unexpected process crash watchdog')
+    .action(async (options) => {
+      logger.banner();
+
+      const runner = new DevRunner({
+        cwd: process.cwd(),
+        frontendOnly: options.frontend,
+        backendOnly: options.backend,
+        enableWatchdog: options.watchdog,
+        enableHotkeys: true,
+      });
+
+      await runner.run();
     });
 
   // Command: add
