@@ -1,0 +1,4 @@
+{
+  "plugins": ["@coderstrim/plugin-laravel"],
+  "doctor": { "maxLevenshteinDistance": 2, "confidenceThreshold": 0.85 }
+}

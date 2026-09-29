@@ -14,6 +14,13 @@ import { loadConfig } from './plugins/config-loader.js';
 import { defaultRegistry } from './plugins/registry.js';
 import { createPluginContext } from './plugins/context-factory.js';
 import { HookDispatcher } from './plugins/dispatcher.js';
+import { executeEject } from './services/eject-service.js';
+import {
+  getUserPreferences,
+  saveUserPreferences,
+  formatEducationalStep,
+  getPreferencesFilePath,
+} from './services/user-preferences.js';
 
 export function createProgram(): Command {
   const program = new Command();
@@ -316,11 +323,19 @@ export function createProgram(): Command {
         logger.info(`✔ Configured CORS & Pre-configured API client (frontend -> backend)`);
       }
       logger.vcs('Initialized clean Git repository with main branch.');
+      const userPrefs = await getUserPreferences();
       logger.heading('\n👉 Next Steps:');
       for (const step of result.nextSteps) {
-        console.log(`   ${step}`);
+        console.log(formatEducationalStep(step, userPrefs.skillLevel));
       }
-      console.log('');
+
+      if (userPrefs.skillLevel === 'beginner') {
+        console.log(`\n${pc.cyan('💡 [Tips Pemula]')} Struktur kode ini 100% standar industri tanpa lock-in dependensi.`);
+        console.log(`   • Jalankan server dengan: ${pc.bold(pc.green('coderstrim dev'))}`);
+        console.log(`   • Ingin melepas dev-toolbar & anchor CodersTrim? Jalankan: ${pc.bold(pc.green('coderstrim eject'))}\n`);
+      } else {
+        console.log('');
+      }
     });
 
   // Command: dev (alias: run)
@@ -585,6 +600,82 @@ export function createProgram(): Command {
       for (const p of registered) {
         const badge = p.name.startsWith('@coderstrim/') ? '[Official]' : '[Community]';
         logger.info(`${badge} ${p.name} v${p.version} (${p.type || 'utility'})`);
+      }
+    });
+
+  // Command: eject
+  program
+    .command('eject')
+    .description('Eject from CodersTrim ecosystem: strip dev toolbars, anchor comments, and config')
+    .option('--dry-run', 'Preview changes without modifying any files')
+    .action(async (options) => {
+      logger.heading('CodersTrim Eject Engine');
+      const isDryRun = Boolean(options.dryRun);
+      const result = await executeEject({
+        cwd: process.cwd(),
+        dryRun: isDryRun,
+      });
+
+      if (result.filesDeleted.length > 0) {
+        logger.info(`Files to delete:`);
+        for (const f of result.filesDeleted) {
+          console.log(`  ${pc.red('✖')} ${f}`);
+        }
+      }
+
+      if (result.filesModified.length > 0) {
+        logger.info(`Files to clean:`);
+        for (const f of result.filesModified) {
+          console.log(`  ${pc.yellow('✎')} ${f}`);
+        }
+      }
+
+      if (isDryRun) {
+        logger.info(result.message);
+        logger.info(`To apply these changes, run: ${pc.green('coderstrim eject')}`);
+      } else {
+        logger.success(result.message);
+        logger.info(`Pre-eject snapshot saved. To undo this eject, run: ${pc.green('coderstrim undo')}`);
+      }
+    });
+
+  // Command: config
+  program
+    .command('config [key] [value]')
+    .description('View or update user preferences (e.g. skillLevel: beginner | pro)')
+    .option('--reset', 'Reset all preferences to default')
+    .action(async (key, value, options) => {
+      logger.heading('CodersTrim User Preferences');
+      if (options.reset) {
+        await saveUserPreferences({ skillLevel: 'beginner', showTerminalTips: true, telemetry: false });
+        logger.success('User preferences reset to default (beginner mode).');
+        return;
+      }
+
+      if (!key) {
+        const prefs = await getUserPreferences();
+        logger.info(`Config file: ${getPreferencesFilePath()}`);
+        logger.info(`  • skillLevel        : ${pc.bold(prefs.skillLevel)}`);
+        logger.info(`  • showTerminalTips  : ${prefs.showTerminalTips}`);
+        logger.info(`  • telemetry         : ${prefs.telemetry}`);
+        logger.info(`\nTo toggle skill level, run: ${pc.green('coderstrim config skillLevel pro')} or ${pc.green('coderstrim config skillLevel beginner')}`);
+        return;
+      }
+
+      if (key === 'skillLevel') {
+        const level = value?.toLowerCase();
+        if (level !== 'beginner' && level !== 'pro') {
+          logger.error("Invalid skillLevel. Choose either 'beginner' or 'pro'.");
+          return;
+        }
+        await saveUserPreferences({ skillLevel: level });
+        logger.success(`Set skillLevel to '${level}'.`);
+      } else if (key === 'showTerminalTips') {
+        const boolVal = value === 'true';
+        await saveUserPreferences({ showTerminalTips: boolVal });
+        logger.success(`Set showTerminalTips to ${boolVal}.`);
+      } else {
+        logger.error(`Unknown configuration key '${key}'. Supported: skillLevel, showTerminalTips.`);
       }
     });
 

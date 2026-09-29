@@ -1,0 +1,10 @@
+{
+  "name": "coderstrim/laravel-app",
+  "type": "project",
+  "description": "CodersTrim Laravel 13 starter project",
+  "require": {
+    "php": "^8.2|^8.3",
+    "laravel/framework": "^13.0",
+    "laravel/sanctum": "^4.0"
+  }
+}

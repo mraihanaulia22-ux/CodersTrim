@@ -1,8 +1,10 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import { getStarterTemplates, StarterTemplate } from './starter-templates.js';
+import { isBinaryFile } from './template-loader.js';
 
 const execAsync = promisify(exec);
 
@@ -43,6 +45,21 @@ export interface ProjectGeneratorResult {
   message: string;
 }
 
+async function writeProjectFile(filePath: string, content: string | Buffer): Promise<void> {
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  if (Buffer.isBuffer(content)) {
+    await fs.writeFile(filePath, content);
+  } else if (isBinaryFile(filePath)) {
+    await fs.writeFile(filePath, Buffer.from(content, 'binary'));
+  } else {
+    await fs.writeFile(filePath, content, 'utf-8');
+  }
+
+  if (filePath.endsWith('gradlew')) {
+    await fs.chmod(filePath, 0o755).catch(() => {});
+  }
+}
+
 /**
  * Scaffolds a new project with standalone or decoupled fullstack architecture,
  * configures CORS & API client wiring, and initializes a clean Git repository.
@@ -52,6 +69,8 @@ export async function generateProject(
 ): Promise<ProjectGeneratorResult> {
   const { projectName, cwd } = options;
   const projectPath = path.resolve(cwd, projectName);
+
+  // Validate directory name
 
   // Check if directory already exists and is not empty
   try {
@@ -107,16 +126,15 @@ export async function generateProject(
       let finalContent = content;
       // Wire API client port to backend port
       if (relPath === 'src/services/api.ts' || relPath === 'services/api.ts') {
-        finalContent = finalContent.replace(
-          /http:\/\/localhost:\d+/g,
-          `http://localhost:${bePort}`
-        );
+        finalContent = finalContent
+          .replace(/__CT_API_BASE_URL__/g, `http://localhost:${bePort}`)
+          .replace(/http:\/\/localhost:\d+/g, `http://localhost:${bePort}`);
       }
       const fullPath = path.join(projectPath, 'frontend', relPath);
-      await fs.mkdir(path.dirname(fullPath), { recursive: true });
-      await fs.writeFile(fullPath, finalContent, 'utf-8');
+      await writeProjectFile(fullPath, finalContent);
       filesCreated.push(path.join('frontend', relPath).replace(/\\/g, '/'));
     }
+
 
     // Direct BaaS client configuration injection:
     if (beKey === 'supabase') {
@@ -152,9 +170,21 @@ export async function generateProject(
         }
       }
       const fullPath = path.join(projectPath, 'backend', relPath);
-      await fs.mkdir(path.dirname(fullPath), { recursive: true });
-      await fs.writeFile(fullPath, finalContent, 'utf-8');
+      await writeProjectFile(fullPath, finalContent);
       filesCreated.push(path.join('backend', relPath).replace(/\\/g, '/'));
+    }
+
+    // Auto-provision Laravel .env with crypto APP_KEY if Laravel backend
+    if (beKey === 'laravel' || beKey === 'laravel-api') {
+      try {
+        const envExamplePath = path.join(projectPath, 'backend', '.env.example');
+        const envPath = path.join(projectPath, 'backend', '.env');
+        let envContent = await fs.readFile(envExamplePath, 'utf-8');
+        const appKey = 'base64:' + crypto.randomBytes(32).toString('base64');
+        envContent = envContent.replace('APP_KEY=', `APP_KEY=${appKey}`);
+        await fs.writeFile(envPath, envContent, 'utf-8');
+        filesCreated.push('backend/.env');
+      } catch {}
     }
 
     // 3. Determine frontend & backend start commands
@@ -314,9 +344,21 @@ npm run dev
 
     for (const [relPath, content] of Object.entries(tpl.files)) {
       const fullFilePath = path.join(projectPath, relPath);
-      await fs.mkdir(path.dirname(fullFilePath), { recursive: true });
-      await fs.writeFile(fullFilePath, content, 'utf-8');
+      await writeProjectFile(fullFilePath, content);
       filesCreated.push(relPath.replace(/\\/g, '/'));
+    }
+
+    // Auto-provision Laravel .env with crypto APP_KEY if standalone Laravel
+    if (activeKey === 'laravel' || activeKey === 'laravel-api') {
+      try {
+        const envExamplePath = path.join(projectPath, '.env.example');
+        const envPath = path.join(projectPath, '.env');
+        let envContent = await fs.readFile(envExamplePath, 'utf-8');
+        const appKey = 'base64:' + crypto.randomBytes(32).toString('base64');
+        envContent = envContent.replace('APP_KEY=', `APP_KEY=${appKey}`);
+        await fs.writeFile(envPath, envContent, 'utf-8');
+        filesCreated.push('.env');
+      } catch {}
     }
 
     nextSteps.push(...tpl.nextSteps);

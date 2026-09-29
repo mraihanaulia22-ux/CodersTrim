@@ -185,8 +185,15 @@ describe('ProjectGenerator Service', () => {
     expect(result.filesCreated).toContain('.gitignore');
     expect(result.filesCreated).toContain('README.md');
     expect(result.filesCreated).toContain('android/app/src/main/AndroidManifest.xml');
-    expect(result.filesCreated).toContain('android/app/build.gradle');
-    expect(result.filesCreated).toContain('android/settings.gradle');
+    const hasAndroidBuildGradle =
+      result.filesCreated.includes('android/app/build.gradle') ||
+      result.filesCreated.includes('android/app/build.gradle.kts');
+    expect(hasAndroidBuildGradle).toBe(true);
+
+    const hasAndroidSettingsGradle =
+      result.filesCreated.includes('android/settings.gradle') ||
+      result.filesCreated.includes('android/settings.gradle.kts');
+    expect(hasAndroidSettingsGradle).toBe(true);
     expect(result.filesCreated).toContain('ios/Runner/Info.plist');
     expect(result.filesCreated).toContain('ios/Runner/AppDelegate.swift');
     expect(result.filesCreated).toContain('lib/main.dart');

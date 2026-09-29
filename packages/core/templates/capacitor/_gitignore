@@ -1,0 +1,17 @@
+node_modules
+dist
+dist-ssr
+*.local
+
+# Capacitor native folders
+/android
+/ios
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+.DS_Store
+.idea
+.vscode

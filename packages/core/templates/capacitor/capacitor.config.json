@@ -1,0 +1,5 @@
+{
+  "appId": "com.coderstrim.__CT_APP_ID__",
+  "appName": "__CT_PROJECT_NAME__",
+  "webDir": "dist"
+}

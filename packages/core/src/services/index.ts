@@ -9,5 +9,8 @@ export * from './patcher.js';
 export * from './port-guard.js';
 export * from './doctor-pipeline.js';
 export * from './starter-templates.js';
+export * from './template-loader.js';
 export * from './project-generator.js';
 export * from './dev-runner.js';
+export * from './user-preferences.js';
+export * from './eject-service.js';

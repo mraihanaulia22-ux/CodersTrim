@@ -1,0 +1,4 @@
+{
+  "plugins": ["@coderstrim/plugin-tailwind", "@coderstrim/plugin-react"],
+  "doctor": { "maxLevenshteinDistance": 2, "confidenceThreshold": 0.85 }
+}
