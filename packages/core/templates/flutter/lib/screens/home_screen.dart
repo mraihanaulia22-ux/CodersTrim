@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
-import '../models/app_info.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,17 +8,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<AppInfo> _appInfoFuture;
+  int _counter = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    _appInfoFuture = ApiService.checkHealth();
-  }
-
-  void _refresh() {
+  void _incrementCounter() {
     setState(() {
-      _appInfoFuture = ApiService.checkHealth();
+      _counter++;
     });
   }
 
@@ -29,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF0F172A),
       appBar: AppBar(
-        title: const Text('__CT_PROJECT_NAME__', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('__CT_PROJECT_NAME__', style: TextStyle(fontWeight: FontWeight.w600)),
         backgroundColor: const Color(0xFF1E293B),
         elevation: 0,
         centerTitle: true,
@@ -41,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 40.0),
                 decoration: BoxDecoration(
                   color: const Color(0xFF1E293B),
                   borderRadius: BorderRadius.circular(24.0),
@@ -55,52 +47,53 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.flutter_dash, size: 64, color: Color(0xFF818CF8)),
-                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: const BoxDecoration(
+                        color: Color(0x664F46E5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.waving_hand_rounded,
+                        size: 40,
+                        color: Color(0xFF818CF8),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     const Text(
-                      '__CT_PROJECT_NAME__',
+                      'Hello World!',
                       style: TextStyle(
-                        fontSize: 22,
+                        fontSize: 26,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Scaffolded with CodersTrim\nModular Flutter Architecture',
-                      style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
+                      'Welcome to your new application',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF94A3B8),
+                      ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 20),
-                    FutureBuilder<AppInfo>(
-                      future: _appInfoFuture,
-                      builder: (context, snapshot) {
-                        final status = snapshot.data?.status ?? 'Connecting...';
-                        return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF0F172A),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: const Color(0xFF334155)),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text('Status: ', style: TextStyle(color: Color(0xFF64748B), fontSize: 12)),
-                              Text(
-                                status,
-                                style: const TextStyle(
-                                  color: Color(0xFF34D399),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                    const SizedBox(height: 28),
+                    FilledButton.icon(
+                      onPressed: _incrementCounter,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xFF4F46E5),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      icon: const Icon(Icons.touch_app_rounded, size: 18),
+                      label: Text(
+                        _counter == 0 ? 'Tap to test interaction' : 'Tapped $_counter ${_counter == 1 ? "time" : "times"}',
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ],
                 ),
@@ -109,16 +102,11 @@ class _HomeScreenState extends State<HomeScreen> {
               // @CodersTrim-Inject-Components
               const Text(
                 'Edit lib/screens/home_screen.dart to start building',
-                style: TextStyle(color: Color(0xFF64748B), fontSize: 12),
+                style: TextStyle(color: Color(0xFF64748B), fontSize: 13),
               ),
             ],
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _refresh,
-        backgroundColor: const Color(0xFF4F46E5),
-        child: const Icon(Icons.refresh, color: Colors.white),
       ),
     );
   }

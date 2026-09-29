@@ -7,15 +7,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 flex min-h-screen items-center justify-center p-6 text-center">
-    <div class="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/60 p-10 shadow-2xl backdrop-blur-xl max-w-lg w-full">
-        <h1 class="text-3xl font-extrabold tracking-tight text-white">{{ $appName ?? '__CT_PROJECT_NAME__' }}</h1>
-        <p class="mt-4 text-sm text-slate-400">Scaffolded with <span class="font-semibold text-red-500">CodersTrim</span> (Laravel 13 Modular MVC).</p>
-        <div class="mt-6 flex flex-col gap-2 rounded-xl border border-slate-800 bg-slate-950 p-4 text-xs font-mono text-slate-400">
-            <div>Controllers: <span class="text-emerald-400">app/Http/Controllers/HomeController.php</span></div>
-            <div>Models: <span class="text-emerald-400">app/Models/User.php</span></div>
-            <div>Database: <span class="text-emerald-400">database/database.sqlite</span></div>
+    <div class="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/60 p-10 shadow-2xl backdrop-blur-xl max-w-md w-full">
+        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-600/20 text-red-400 mb-6">
+            <span class="text-2xl">👋</span>
         </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-white">Hello World!</h1>
+        <p class="mt-2 text-sm text-slate-400">Welcome to <span class="font-semibold text-slate-200">{{ $appName ?? '__CT_PROJECT_NAME__' }}</span></p>
+
         <!-- @CodersTrim-Inject-Components -->
+        <div class="mt-8 rounded-xl border border-slate-800/80 bg-slate-950/50 p-3 text-xs font-mono text-slate-400">
+            Edit <span class="text-red-400">resources/views/welcome.blade.php</span> to get started
+        </div>
     </div>
 
     @env('local')

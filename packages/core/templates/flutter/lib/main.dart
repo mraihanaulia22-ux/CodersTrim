@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 
 void main() {
-  runApp(const CodersTrimApp());
+  runApp(const MyApp());
 }
 
-class CodersTrimApp extends StatelessWidget {
-  const CodersTrimApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
